@@ -24,15 +24,19 @@ public class MessageEntity {
     @Column(name = "text")
     private String body;
 
+    @Enumerated(EnumType.STRING)
+    private EMessageStatus status;
+
     public MessageEntity() {
     }
 
-    public MessageEntity(Long id, LocalDateTime dateCreate, String recipient, String subject, String body) {
+    public MessageEntity(Long id, LocalDateTime dateCreate, String recipient, String subject, String body, EMessageStatus status) {
         this.id = id;
         this.dateCreate = dateCreate;
         this.recipient = recipient;
         this.subject = subject;
         this.body = body;
+        this.status = status;
     }
 
     public Long getId() {
@@ -75,6 +79,14 @@ public class MessageEntity {
         this.body = body;
     }
 
+    public EMessageStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(EMessageStatus status) {
+        this.status = status;
+    }
+
     @Override
     public String toString() {
         return "MessageEntity{" +
@@ -83,6 +95,7 @@ public class MessageEntity {
                 ", recipient='" + recipient + '\'' +
                 ", subject='" + subject + '\'' +
                 ", body='" + body + '\'' +
+                ", status=" + status +
                 '}';
     }
 }

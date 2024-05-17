@@ -18,7 +18,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler
     public ResponseEntity<Map<String, Object>> handleIllegal(IllegalArgumentException e){
-        logger.log(Level.WARN, "Проверьте данные", e);
+        logger.log(Level.WARN, "Check data", e);
 
         Map<String, Object> errorObj = new HashMap<>();
         errorObj.put("error", e.getMessage());
@@ -28,7 +28,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler
     public ResponseEntity<Map<String, Object>> handleIllegal(Exception e){
-        logger.log(Level.ERROR, "Ошибка на стороне сервера", e);
+        logger.log(Level.ERROR, "Internal error", e);
 
         Map<String, Object> errorObj = new HashMap<>();
         errorObj.put("error", e.getMessage());

@@ -3,33 +3,51 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:tx="http://www.springframework.org/schema/tx"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
 		https://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/context
 		https://www.springframework.org/schema/context/spring-context.xsd
 		http://www.springframework.org/schema/mvc
-		https://www.springframework.org/schema/mvc/spring-mvc.xsd">
+		https://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/tx
+        https://www.springframework.org/schema/tx/spring-tx.xsd">
 
     <mvc:annotation-driven/>
+    <tx:annotation-driven/>
 
-    <context:component-scan base-package="com.github.ManMaxMan.sender.controller.http,
-    com.github.ManMaxMan.sender.controller.filter"/>
+    <context:component-scan base-package="com.github.ManMaxMan.sender.controller.*,
+    com.github.ManMaxMan.sender.service.*, com.github.ManMaxMan.sender.dao.*"/>
 
 
     <bean id="messageService" class="com.github.ManMaxMan.sender.service.impl.MessageService">
         <constructor-arg type="com.github.ManMaxMan.sender.dao.api.IMessageDao" ref="messageDao"/>
         <constructor-arg type="com.github.ManMaxMan.sender.service.api.IConverter" ref="messageEntityToDTOConverter"/>
-        <constructor-arg type="com.github.ManMaxMan.sender.service.api.ISendingService" ref="sendingService"/>
     </bean>
+
+    <bean id="userService" class="com.github.ManMaxMan.sender.service.impl.UserService">
+        <constructor-arg type="com.github.ManMaxMan.sender.dao.api.IUserDao" ref="userDao"/>
+        <constructor-arg type="com.github.ManMaxMan.sender.service.api.IMessageService" ref="messageService"/>
+    </bean>
+
+    <bean id="sendingService" class="com.github.ManMaxMan.sender.service.impl.SendingService" />
 
     <bean id="messageEntityToDTOConverter" class="com.github.ManMaxMan.sender.service.converter.MessageEntityToDTOConverter" scope="prototype" />
 
     <bean id="messageDao" class="com.github.ManMaxMan.sender.dao.impl.MessageDao" />
 
-    <bean id="sendingService" class="com.github.ManMaxMan.sender.service.impl.SendingService" />
+    <bean id="userDao" class="com.github.ManMaxMan.sender.dao.impl.UserDao" />
 
     <bean id="em" factory-bean="daoFactory" factory-method="getEntityManager"/>
 
     <bean id="daoFactory" class="com.github.ManMaxMan.sender.dao.factory.DaoFactory"/>
+
+    <bean id="emFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="persistenceUnitName" value="jpa-entity-definition"/>
+    </bean>
+
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="emFactory"/>
+    </bean>
 
 </beans>

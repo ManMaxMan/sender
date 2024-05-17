@@ -1,7 +1,9 @@
 package com.github.ManMaxMan.sender.service.impl;
 
 import com.github.ManMaxMan.sender.core.api.dto.MessageDTO;
+import com.github.ManMaxMan.sender.dao.entity.MessageEntity;
 import com.github.ManMaxMan.sender.service.api.ISendingService;
+import com.github.ManMaxMan.sender.service.api.exceptions.FailMessageSendException;
 import com.sun.mail.smtp.SMTPTransport;
 
 import javax.mail.Message;
@@ -21,7 +23,7 @@ public class SendingService implements ISendingService {
     private static final String EMAIL_TO_CC = "";
 
     @Override
-    public void sendMessage(MessageDTO messageDTO) throws MessagingException {
+    public void send(MessageEntity message) throws FailMessageSendException {
 
         Properties prop = System.getProperties();
         prop.put("mail.smtp.host", SMTP_SERVER); //optional, defined in SMTPTransport
@@ -33,13 +35,14 @@ public class SendingService implements ISendingService {
         Message msg = new MimeMessage(session);
 
 
+        try {
             msg.setFrom(new InternetAddress(EMAIL_FROM));
             msg.setRecipients(Message.RecipientType.TO,
-                    InternetAddress.parse(messageDTO.getRecipient(), false));
+                    InternetAddress.parse(message.getRecipient(), false));
             msg.setRecipients(Message.RecipientType.CC,
                     InternetAddress.parse(EMAIL_TO_CC, false));
-            msg.setSubject(messageDTO.getSubject());
-            msg.setText(messageDTO.getBody());
+            msg.setSubject(message.getSubject());
+            msg.setText(message.getBody());
             msg.setSentDate(new Date());
 
             SMTPTransport t = (SMTPTransport) session.getTransport("smtp");
@@ -49,6 +52,9 @@ public class SendingService implements ISendingService {
             //System.out.println("Response: " + t.getLastServerResponse());
 
             t.close();
+        }catch (MessagingException e){
+            throw new FailMessageSendException(e);
+        }
 
     }
 }

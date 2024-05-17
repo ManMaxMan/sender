@@ -29,6 +29,7 @@ CREATE TABLE app.messages
     recipient character varying NOT NULL,
     subject character varying NOT NULL,
     text character varying NOT NULL,
+    status character varying,
     CONSTRAINT messages_id_pk PRIMARY KEY (id)
 );
 

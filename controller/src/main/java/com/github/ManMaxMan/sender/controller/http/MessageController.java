@@ -23,18 +23,28 @@ public class MessageController {
     }
 
     @GetMapping(produces = "application/json;charset=UTF-8")
-    public String get(@RequestParam(value = "id", required = false) Long id)
+    public String get(@RequestParam(value = "id", required = false) Long id,
+                      @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
+                      @RequestParam(value = "size", required = false, defaultValue = "10") Integer size)
             throws IOException {
 
         if(id != null){
             return mapper.writeValueAsString(messageService.get(id));
         } else {
-            return null;
+            List<MessageDTO> entityList = messageService.get(page, size);
+            return mapper.writeValueAsString(entityList);
         }
     }
+
     @PostMapping
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.CREATED)
     public void sendMessage(@RequestBody MessageDTO message) {
         this.messageService.create(message);
+    }
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public void sendMessage(@RequestBody List<MessageDTO> dtoList) {
+        this.messageService.create(dtoList);
     }
 }
